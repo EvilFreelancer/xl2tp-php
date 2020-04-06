@@ -2,6 +2,7 @@
 
 namespace XL2TP;
 
+use XL2TP\Helpers;
 use XL2TP\Interfaces\ConfigInterface;
 use XL2TP\Interfaces\GeneratorInterface;
 use XL2TP\Interfaces\SectionInterface;
@@ -12,6 +13,9 @@ use XL2TP\Interfaces\SectionInterface;
  * @property \XL2TP\Interfaces\Sections\GlobalInterface $global
  * @property \XL2TP\Interfaces\Sections\LnsInterface    $lns
  * @property \XL2TP\Interfaces\Sections\LacInterface    $lac
+ * @method global(): \XL2TP\Interfaces\Sections\GlobalInterface
+ * @method lns(string $name = null): \XL2TP\Interfaces\Sections\LnsInterface
+ * @method lac(string $name = null): \XL2TP\Interfaces\Sections\LacInterface
  *
  * @package XL2TP
  */
@@ -38,7 +42,7 @@ class Config implements ConfigInterface, GeneratorInterface
     /**
      * Get section of configuration by provided name
      *
-     * @param string|null $name Name of section
+     * @param string $name Name of section
      *
      * @return \XL2TP\Interfaces\SectionInterface
      * @throws \InvalidArgumentException
@@ -85,36 +89,46 @@ class Config implements ConfigInterface, GeneratorInterface
      */
     public function __get(string $name = null)
     {
-        if (!in_array($name, $this->allowed, true)) {
-            throw new \InvalidArgumentException('Required section is not allowed here');
+        $nameWithSpaces = Helpers::decamelize($name);
+        $words          = explode(' ', $nameWithSpaces);
+        $name           = $words[0];
+
+        // Add default suffix of section if not global
+        if (mb_strtolower($words[0]) !== 'global') {
+            if (empty($words[1])) {
+                $name .= ' default';
+            } else {
+                $name .= ' ' . $words[1];
+            }
         }
 
         return $this->section($name);
     }
 
     /**
-     * Magic method required for call of another classes
+     * Get section by name
      *
      * @param string $name
      * @param array  $arguments
      *
-     * @return bool|object
-     * @throws \ErrorException
+     * @return \XL2TP\Interfaces\SectionInterface
      */
     public function __call(string $name, array $arguments)
     {
-        // Set class name as namespace
-        $class = $this->namespace . '\\' . $this->snakeToPascal($name) . 's';
+        if (!in_array($name, $this->allowed, true)) {
+            throw new \InvalidArgumentException('Required section is not allowed here');
+        }
 
-        var_dump("[$class] has been called!");
+        // Add default suffix of section if not global
+        if (mb_strtolower($name) !== 'global') {
+            if (empty($arguments[0])) {
+                $name .= ' default';
+            } else {
+                $name .= ' ' . $arguments[0];
+            }
+        }
 
-        // Try to create object by name
-        $object = new $class($this->config);
-
-        // Call user function from endpoint class
-        $func = call_user_func_array($object, $arguments);
-
-        return $this->config->get('auto_exec') ? $func->exec() : $func;
+        return $this->section($name);
     }
 
     /**

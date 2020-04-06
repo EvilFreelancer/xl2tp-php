@@ -1,8 +1,6 @@
 <?php
 
-namespace OpenVPN;
-
-use RuntimeException;
+namespace XL2TP;
 
 class Helpers
 {
