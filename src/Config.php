@@ -93,8 +93,12 @@ class Config implements ConfigInterface, GeneratorInterface
         $words          = explode(' ', $nameWithSpaces);
         $name           = $words[0];
 
+        if (!in_array($name, $this->allowed, true)) {
+            throw new \InvalidArgumentException('Required section is not allowed here');
+        }
+
         // Add default suffix of section if not global
-        if (mb_strtolower($words[0]) !== 'global') {
+        if (mb_strtolower($name) !== 'global') {
             if (empty($words[1])) {
                 $name .= ' default';
             } else {
