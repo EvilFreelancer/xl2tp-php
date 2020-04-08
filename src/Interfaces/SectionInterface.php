@@ -2,6 +2,12 @@
 
 namespace XL2TP\Interfaces;
 
+/**
+ * Interface SectionInterface
+ *
+ * @package XL2TP\Interfaces
+ * @since   1.0.0
+ */
 interface SectionInterface
 {
     /**
@@ -16,12 +22,12 @@ interface SectionInterface
     /**
      * Set parameter of section
      *
-     * @param string      $key
-     * @param string|null $value
+     * @param string $key
+     * @param string $value
      *
      * @return \XL2TP\Interfaces\SectionInterface
      */
-    public function set(string $key, string $value = null): SectionInterface;
+    public function set(string $key, string $value): SectionInterface;
 
     /**
      * Get value of section
@@ -38,7 +44,7 @@ interface SectionInterface
      *
      * @param string $key
      *
-     * @return \XL2TP\Interfaces\SectionInterface
+     * @return void
      */
-    public function unset(string $key): SectionInterface;
+    public function unset(string $key): void;
 }

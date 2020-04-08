@@ -2,6 +2,12 @@
 
 namespace XL2TP\Interfaces;
 
+/**
+ * Interface ConfigInterface
+ *
+ * @package XL2TP\Interfaces
+ * @since   1.0.0
+ */
 interface ConfigInterface
 {
     /**
