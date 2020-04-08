@@ -121,6 +121,7 @@ class Section implements SectionInterface
      */
     public function set(string $key, string $value): SectionInterface
     {
+        $key = Helpers::decamelize($key);
         if (!\in_array($key, $this->allowed, true)) {
             throw new \InvalidArgumentException("Parameter \"$key\" is not allowed");
         }
