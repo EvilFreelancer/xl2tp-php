@@ -2,7 +2,6 @@
 
 namespace XL2TP;
 
-use XL2TP\Helpers;
 use XL2TP\Interfaces\ConfigInterface;
 use XL2TP\Interfaces\GeneratorInterface;
 use XL2TP\Interfaces\SectionInterface;
@@ -13,9 +12,9 @@ use XL2TP\Interfaces\SectionInterface;
  * @property \XL2TP\Interfaces\Sections\GlobalInterface $global
  * @property \XL2TP\Interfaces\Sections\LnsInterface    $lns
  * @property \XL2TP\Interfaces\Sections\LacInterface    $lac
- * @method global(): \XL2TP\Interfaces\Sections\GlobalInterface
- * @method lns(string $name = null): \XL2TP\Interfaces\Sections\LnsInterface
- * @method lac(string $name = null): \XL2TP\Interfaces\Sections\LacInterface
+ * @method   \XL2TP\Interfaces\Sections\GlobalInterface global()
+ * @method   \XL2TP\Interfaces\Sections\LnsInterface    lns(string $suffix = null)
+ * @method   \XL2TP\Interfaces\Sections\LacInterface    lac(string $suffix = null)
  *
  * @package XL2TP
  */
@@ -24,36 +23,27 @@ class Config implements ConfigInterface, GeneratorInterface
     /**
      * List of preconfigured sections
      *
-     * @var array<int, SectionInterface>
+     * @var array<string, SectionInterface>
      */
-    private $sections = [];
-
-    /**
-     * Allowed default sections
-     *
-     * @var array
-     */
-    private $allowed = [
-        'global',
-        'lns',
-        'lac'
-    ];
+    public $sections = [];
 
     /**
      * Get section of configuration by provided name
      *
-     * @param string $name Name of section
+     * @param string      $section Name of section
+     * @param string|null $suffix  Additional suffix of section name
      *
      * @return \XL2TP\Interfaces\SectionInterface
      * @throws \InvalidArgumentException
      */
-    public function section(string $name): SectionInterface
+    public function section(string $section, string $suffix = null): SectionInterface
     {
-        if (!isset($this->sections[$name]) || !$this->sections[$name] instanceof SectionInterface) {
-            $this->sections[$name] = new Section($name);
+        $hash = md5($section . $suffix);
+        if (!isset($this->sections[$hash]) || !$this->sections[$hash] instanceof SectionInterface) {
+            $this->sections[$hash] = new Section($section, $suffix);
         }
 
-        return $this->sections[$name];
+        return $this->sections[$hash];
     }
 
     /**
@@ -87,52 +77,35 @@ class Config implements ConfigInterface, GeneratorInterface
      * @return \XL2TP\Interfaces\SectionInterface
      * @throws \InvalidArgumentException
      */
-    public function __get(string $name = null)
+    public function __get(string $name)
     {
         $nameWithSpaces = Helpers::decamelize($name);
         $words          = explode(' ', $nameWithSpaces);
-        $name           = $words[0];
+        $section        = $words[0];
+        $suffix         = $words[1] ?? null;
 
-        if (!in_array($name, $this->allowed, true)) {
-            throw new \InvalidArgumentException('Required section is not allowed here');
+        if (!array_key_exists($section, Section::RELATIONS)) {
+            throw new \InvalidArgumentException("Required section \"{$section}\" is not allowed");
         }
 
-        // Add default suffix of section if not global
-        if (mb_strtolower($name) !== 'global') {
-            if (empty($words[1])) {
-                $name .= ' default';
-            } else {
-                $name .= ' ' . $words[1];
-            }
-        }
-
-        return $this->section($name);
+        return $this->section($section, $suffix);
     }
 
     /**
      * Get section by name
      *
-     * @param string $name
+     * @param string $section
      * @param array  $arguments
      *
      * @return \XL2TP\Interfaces\SectionInterface
      */
-    public function __call(string $name, array $arguments)
+    public function __call(string $section, array $arguments)
     {
-        if (!in_array($name, $this->allowed, true)) {
-            throw new \InvalidArgumentException('Required section is not allowed here');
+        if (!array_key_exists($section, Section::RELATIONS)) {
+            throw new \InvalidArgumentException("Required section \"{$section}\" is not allowed");
         }
 
-        // Add default suffix of section if not global
-        if (mb_strtolower($name) !== 'global') {
-            if (empty($arguments[0])) {
-                $name .= ' default';
-            } else {
-                $name .= ' ' . $arguments[0];
-            }
-        }
-
-        return $this->section($name);
+        return $this->section($section, $arguments[0] ?? null);
     }
 
     /**
