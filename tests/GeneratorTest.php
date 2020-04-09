@@ -3,17 +3,31 @@
 namespace XL2TP\Tests;
 
 use Exception;
+use PHPUnit\Framework\TestCase;
 use XL2TP\Config;
 use XL2TP\Generator;
-use PHPUnit\Framework\TestCase;
 
 class GeneratorTest extends TestCase
 {
+    /**
+     * @var \XL2TP\Generator
+     */
     protected $object;
 
     protected function setUp(): void
     {
-        $this->object = new Generator(new Config());
+        $obj = new Config();
+
+        $obj->global->port          = 123;
+        $obj->global->authFile      = '/etc/auth/file';
+        $obj->global->accessControl = 'yes';
+        $obj->global->listenAddr    = '0.0.0.0';
+
+        $obj->lns->exclusive = 'yes';
+        $obj->lns->lac       = 'awesome';
+        $obj->lns->assignIp  = '192.168.1.1';
+
+        $this->object = new Generator($obj);
     }
 
     public function test__construct(): void
@@ -28,13 +42,11 @@ class GeneratorTest extends TestCase
 
     public function testGenerate(): void
     {
-        $obj = new Config();
-        $obj->global->port          = 123;
-        $obj->global->authFile      = '/etc/auth/file';
-        $obj->global->accessControl = 'yes';
-        $obj->lns->exclusive = 'yes';
-        $obj->lns->lac       = 'awesome';
-        $obj->lns->assignIp  = '192.168.1.1';
-        $this->assertIsString($obj->generate());
+        $sample = "[global]\nport = 123\nauth file = \"/etc/auth/file\"\naccess control = \"yes\"\nlisten-addr = \"0.0.0.0\"\n\n";
+        $sample .= "[lns default]\nexclusive = \"yes\"\nlac = \"awesome\"\nassign ip = \"192.168.1.1\"\n\n";
+        $ini    = $this->object->generate();
+
+        $this->assertIsString($ini);
+        $this->assertEquals($ini, $sample);
     }
 }
