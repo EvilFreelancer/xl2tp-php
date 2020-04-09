@@ -4,6 +4,7 @@ namespace XL2TP\Tests;
 
 use Exception;
 use PHPUnit\Framework\TestCase;
+use RuntimeException;
 use XL2TP\Config;
 use XL2TP\Generator;
 
@@ -48,5 +49,12 @@ class GeneratorTest extends TestCase
 
         $this->assertIsString($ini);
         $this->assertEquals($ini, $sample);
+    }
+
+    public function testGenerateEx(): void
+    {
+        $this->expectException(RuntimeException::class);
+        $this->object->config = 'test';
+        $this->object->generate();
     }
 }

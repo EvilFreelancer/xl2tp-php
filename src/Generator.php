@@ -2,6 +2,7 @@
 
 namespace XL2TP;
 
+use RuntimeException;
 use XL2TP\Interfaces\ConfigInterface;
 use XL2TP\Interfaces\GeneratorInterface;
 
@@ -10,7 +11,7 @@ class Generator implements GeneratorInterface
     /**
      * @var ConfigInterface
      */
-    private $config;
+    public $config;
 
     /**
      * Generator constructor.
@@ -47,9 +48,14 @@ class Generator implements GeneratorInterface
      * Generate L2TP configuration by parameters from memory
      *
      * @return string
+     * @throws \RuntimeException
      */
     public function generate(): string
     {
+        if (!$this->config instanceof ConfigInterface) {
+            throw new RuntimeException('Provided config is invalid');
+        }
+
         $result = '';
         foreach ($this->config->sections as $section) {
             $result .= $this->render($section);
