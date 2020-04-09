@@ -2,7 +2,11 @@
 
 namespace XL2TP;
 
+use InvalidArgumentException;
 use XL2TP\Interfaces\SectionInterface;
+use XL2TP\Interfaces\Sections\GlobalInterface;
+use XL2TP\Interfaces\Sections\LacInterface;
+use XL2TP\Interfaces\Sections\LnsInterface;
 
 /**
  * Class Section
@@ -44,9 +48,9 @@ class Section implements SectionInterface
      * Binding to allowed lists of parameters
      */
     public const RELATIONS = [
-        'global' => \XL2TP\Interfaces\Sections\GlobalInterface::class,
-        'lns'    => \XL2TP\Interfaces\Sections\LnsInterface::class,
-        'lac'    => \XL2TP\Interfaces\Sections\LacInterface::class,
+        'global' => GlobalInterface::class,
+        'lns'    => LnsInterface::class,
+        'lac'    => LacInterface::class,
     ];
 
     /**
@@ -55,7 +59,7 @@ class Section implements SectionInterface
      * @param string|null $section
      * @param string|null $suffix
      *
-     * @throws \InvalidArgumentException
+     * @throws InvalidArgumentException
      */
     public function __construct(string $section = null, string $suffix = null)
     {
@@ -77,12 +81,12 @@ class Section implements SectionInterface
 
         // Check if section is allowed
         if (!array_key_exists($section, self::RELATIONS)) {
-            throw new \InvalidArgumentException("Section \"{$section}\" is not allowed");
+            throw new InvalidArgumentException('Section "' . $section .'" is not allowed');
         }
 
         // Extract allowed list
-        /** @var \XL2TP\Interfaces\Sections\GlobalInterface|\XL2TP\Interfaces\Sections\LnsInterface|\XL2TP\Interfaces\Sections\LacInterface $allowed */
-        $allowed       = Section::RELATIONS[$this->section];
+        /** @var GlobalInterface|LnsInterface|LacInterface $allowed */
+        $allowed       = self::RELATIONS[$this->section];
         $this->allowed = $allowed::ALLOWED;
     }
 
@@ -104,7 +108,7 @@ class Section implements SectionInterface
      * @param string $key
      *
      * @return string
-     * @throws \InvalidArgumentException
+     * @throws InvalidArgumentException
      */
     public function get(string $key): string
     {
@@ -117,13 +121,13 @@ class Section implements SectionInterface
      * @param string $key
      * @param string $value
      *
-     * @return \XL2TP\Interfaces\SectionInterface
+     * @return SectionInterface
      */
     public function set(string $key, string $value): SectionInterface
     {
         $key = Helpers::decamelize($key);
-        if (!\in_array($key, $this->allowed, true)) {
-            throw new \InvalidArgumentException("Parameter \"$key\" is not allowed");
+        if (!in_array($key, $this->allowed, true)) {
+            throw new InvalidArgumentException('Parameter "' . $key . '" is not allowed');
         }
         $this->parameters[$key] = $value;
         return $this;

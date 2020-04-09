@@ -8,14 +8,14 @@ use XL2TP\Interfaces\GeneratorInterface;
 class Generator implements GeneratorInterface
 {
     /**
-     * @var \XL2TP\Interfaces\ConfigInterface
+     * @var ConfigInterface
      */
     private $config;
 
     /**
      * Generator constructor.
      *
-     * @param \XL2TP\Interfaces\ConfigInterface $config
+     * @param ConfigInterface $config
      */
     public function __construct(ConfigInterface $config)
     {
@@ -25,7 +25,7 @@ class Generator implements GeneratorInterface
     /**
      * Render section by parameters in array
      *
-     * @param \XL2TP\Section $section
+     * @param Section $section
      *
      * @return string
      */

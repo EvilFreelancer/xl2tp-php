@@ -15,7 +15,7 @@ interface ImporterInterface
      *
      * @param string $filename Path to file with INI configuration
      *
-     * @return \XL2TP\Interfaces\ImporterInterface
+     * @return ImporterInterface
      */
     public function load(string $filename): ImporterInterface;
 
@@ -24,7 +24,7 @@ interface ImporterInterface
      *
      * @param array $configuration
      *
-     * @return \XL2TP\Interfaces\ImporterInterface
+     * @return ImporterInterface
      */
     public function loadArray(array $configuration): ImporterInterface;
 
@@ -33,7 +33,7 @@ interface ImporterInterface
      *
      * @param array $configuration
      *
-     * @return \XL2TP\Interfaces\ImporterInterface
+     * @return ImporterInterface
      */
     public function loadJson(array $configuration): ImporterInterface;
 }
