@@ -1,11 +1,18 @@
 <?php
+
 require_once __DIR__ . '/../vendor/autoload.php';
 
-$obj = new \XL2TP\Config();
+use XL2TP\Config;
+
+$obj = new Config();
+
+#echo '<pre>' . print_r($obj, true) . '</pre>';
 
 $obj->global->port          = 123;
 $obj->global->authFile      = '/etc/auth/file';
 $obj->global->accessControl = 'yes';
+
+#echo '<pre>' . print_r($obj, true) . '</pre>';
 
 $obj->lns->exclusive = 'yes';
 $obj->lns->lac       = 'awesome';
@@ -26,6 +33,8 @@ $obj->lac->lns       = 'test';
 $obj->lac('awesome')->redial    = 123;
 $obj->lac('awesome')->maxRedial = 1;
 $obj->lac('awesome')->lns       = 'test';
+
+echo '<pre>' . print_r($obj, true) . '</pre>';
 
 // dd($obj);
 echo $obj->generate();

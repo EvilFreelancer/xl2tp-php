@@ -51,17 +51,18 @@ class Config implements ConfigInterface, GeneratorInterface
         return $this->sections[$hash];
     }
 
-    /**
-     * If required section is set
-     *
-     * @param string $name
-     *
-     * @return bool
-     */
-    public function __isset(string $name): bool
-    {
-        return isset($this->sections[$name]);
-    }
+// Метод не работает, даже не заходит, тесты выявили
+//    /**
+//     * If required section is set
+//     *
+//     * @param string $name
+//     *
+//     * @return bool
+//     */
+//    public function __isset(string $name): bool
+//    {
+//        return isset($this->sections[$name]);
+//    }
 
     /**
      * Bad method call, not allowed here
