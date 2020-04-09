@@ -1,3 +1,10 @@
+[![Latest Stable Version](https://poser.pugx.org/evilfreelancer/xl2tp-php/v/stable)](https://packagist.org/packages/evilfreelancer/xl2tp-php)
+[![Build Status](https://scrutinizer-ci.com/g/EvilFreelancer/xl2tp-php/badges/build.png?b=master)](https://travis-ci.org/EvilFreelancer/xl2tp-php)
+[![Total Downloads](https://poser.pugx.org/evilfreelancer/xl2tp-php/downloads)](https://packagist.org/packages/evilfreelancer/xl2tp-php)
+[![License](https://poser.pugx.org/evilfreelancer/xl2tp-php/license)](https://packagist.org/packages/evilfreelancer/xl2tp-php)
+[![Code Coverage](https://scrutinizer-ci.com/g/EvilFreelancer/xl2tp-php/badges/coverage.png?b=master)](https://scrutinizer-ci.com/g/EvilFreelancer/xl2tp-php/?branch=master)
+[![Scrutinizer CQ](https://scrutinizer-ci.com/g/evilfreelancer/xl2tp-php/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/evilfreelancer/xl2tp-php/)
+
 # XL2TP configuration manager on PHP 
 
 XL2TP configuration manager gives you ability to work with configuration of your services in OOP style.
