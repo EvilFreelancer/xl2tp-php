@@ -64,7 +64,7 @@ class Section implements SectionInterface
     public function __construct(string $section = null, string $suffix = null)
     {
         // Set section
-        if (!empty($section) && mb_strtolower(trim($section)) !== 'global') {
+        if (!empty(trim($section))) {
             $this->section = mb_strtolower(trim($section));
 
             // Check if section is allowed
@@ -74,7 +74,7 @@ class Section implements SectionInterface
         }
 
         // Set suffix
-        if (!empty($suffix) && mb_strtolower(trim($suffix)) !== 'default') {
+        if (!empty(trim($suffix))) {
             $this->suffix = mb_strtolower(trim($suffix));
         }
 
