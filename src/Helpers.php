@@ -14,7 +14,7 @@ class Helpers
     public static function decamelize(string $input): string
     {
         // It's for global section
-        if ($input === 'listenAddr') {
+        if (in_array($input, ['listenAddr', 'listen-addr'])) {
             return 'listen-addr';
         }
 

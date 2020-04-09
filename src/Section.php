@@ -64,24 +64,18 @@ class Section implements SectionInterface
     public function __construct(string $section = null, string $suffix = null)
     {
         // Set section
-        if (!empty($section)) {
-            $section = trim($section);
-            if (mb_strtolower($section) !== 'global') {
-                $this->section = mb_strtolower($section);
+        if (!empty($section) && mb_strtolower(trim($section)) !== 'global') {
+            $this->section = mb_strtolower(trim($section));
+
+            // Check if section is allowed
+            if (!array_key_exists($section, self::RELATIONS)) {
+                throw new InvalidArgumentException('Section "' . $section . '" is not allowed');
             }
         }
 
         // Set suffix
-        if (!empty($suffix)) {
-            $suffix = trim($suffix);
-            if (mb_strtolower($suffix) !== 'default') {
-                $this->suffix = mb_strtolower($suffix);
-            }
-        }
-
-        // Check if section is allowed
-        if (!array_key_exists($section, self::RELATIONS)) {
-            throw new InvalidArgumentException('Section "' . $section .'" is not allowed');
+        if (!empty($suffix) && mb_strtolower(trim($suffix)) !== 'default') {
+            $this->suffix = mb_strtolower(trim($suffix));
         }
 
         // Extract allowed list
@@ -118,18 +112,25 @@ class Section implements SectionInterface
     /**
      * Set parameter of section
      *
-     * @param string $key
-     * @param string $value
+     * @param string      $key
+     * @param string|null $value
      *
      * @return SectionInterface
      */
-    public function set(string $key, string $value): SectionInterface
+    public function set(string $key, string $value = null): SectionInterface
     {
         $key = Helpers::decamelize($key);
         if (!in_array($key, $this->allowed, true)) {
             throw new InvalidArgumentException('Parameter "' . $key . '" is not allowed');
         }
-        $this->parameters[$key] = $value;
+
+        // Unset empty value
+        if (empty($value)) {
+            $this->unset($key);
+        } else {
+            $this->parameters[$key] = $value;
+        }
+
         return $this;
     }
 
@@ -146,6 +147,8 @@ class Section implements SectionInterface
     }
 
     /**
+     * Alias to `->get()`
+     *
      * @param string $key
      *
      * @return string
@@ -156,6 +159,8 @@ class Section implements SectionInterface
     }
 
     /**
+     * Alias to `->has()`
+     *
      * @param string $key
      *
      * @return bool
@@ -166,10 +171,12 @@ class Section implements SectionInterface
     }
 
     /**
-     * @param string $key
-     * @param string $value
+     * Alias to `->set()`
+     *
+     * @param string      $key
+     * @param string|null $value
      */
-    public function __set(string $key, string $value)
+    public function __set(string $key, string $value = null)
     {
         $this->set($key, $value);
     }

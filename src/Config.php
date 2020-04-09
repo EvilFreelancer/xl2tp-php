@@ -43,6 +43,10 @@ class Config implements ConfigInterface, GeneratorInterface
      */
     public function section(string $section, string $suffix = null): SectionInterface
     {
+        if (empty($suffix) && mb_strtolower(trim($section)) !== 'global') {
+            $suffix = 'default';
+        }
+
         $hash = md5($section . $suffix);
         if (!isset($this->sections[$hash]) || !$this->sections[$hash] instanceof SectionInterface) {
             $this->sections[$hash] = new Section($section, $suffix);
@@ -51,18 +55,24 @@ class Config implements ConfigInterface, GeneratorInterface
         return $this->sections[$hash];
     }
 
-// Метод не работает, даже не заходит, тесты выявили
-//    /**
-//     * If required section is set
-//     *
-//     * @param string $name
-//     *
-//     * @return bool
-//     */
-//    public function __isset(string $name): bool
-//    {
-//        return isset($this->sections[$name]);
-//    }
+    /**
+     * If required section is set
+     *
+     * @param string $name
+     *
+     * @return bool
+     */
+    public function __isset(string $name): bool
+    {
+        $nameWithSpaces = Helpers::decamelize($name);
+        $words          = explode(' ', $nameWithSpaces);
+        $section        = $words[0];
+        $suffix         = $words[1] ?? null;
+
+        $hash = md5($section . $suffix);
+
+        return isset($this->sections[$hash]);
+    }
 
     /**
      * Bad method call, not allowed here
@@ -91,7 +101,7 @@ class Config implements ConfigInterface, GeneratorInterface
         $suffix         = $words[1] ?? null;
 
         if (!array_key_exists($section, Section::RELATIONS)) {
-            throw new InvalidArgumentException('Required section "' . $section .'" is not allowed');
+            throw new InvalidArgumentException('Required section "' . $section . '" is not allowed');
         }
 
         return $this->section($section, $suffix);
@@ -107,11 +117,13 @@ class Config implements ConfigInterface, GeneratorInterface
      */
     public function __call(string $section, array $arguments)
     {
+        $suffix = $arguments[0] ?? null;
+
         if (!array_key_exists($section, Section::RELATIONS)) {
-            throw new InvalidArgumentException('Required section "' . $section .'" is not allowed');
+            throw new InvalidArgumentException('Required section "' . $section . '" is not allowed');
         }
 
-        return $this->section($section, $arguments[0] ?? null);
+        return $this->section($section, $suffix);
     }
 
     /**
