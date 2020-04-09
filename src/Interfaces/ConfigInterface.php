@@ -2,6 +2,8 @@
 
 namespace XL2TP\Interfaces;
 
+use InvalidArgumentException;
+
 /**
  * Interface ConfigInterface
  *
@@ -15,8 +17,8 @@ interface ConfigInterface
      *
      * @param string|null $name Name of section
      *
-     * @return \XL2TP\Interfaces\SectionInterface
-     * @throws \InvalidArgumentException
+     * @return SectionInterface
+     * @throws InvalidArgumentException
      */
     public function section(string $name): SectionInterface;
 }

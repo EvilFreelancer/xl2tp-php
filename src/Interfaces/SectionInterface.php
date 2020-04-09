@@ -2,6 +2,8 @@
 
 namespace XL2TP\Interfaces;
 
+use InvalidArgumentException;
+
 /**
  * Interface SectionInterface
  *
@@ -25,7 +27,7 @@ interface SectionInterface
      * @param string $key
      * @param string $value
      *
-     * @return \XL2TP\Interfaces\SectionInterface
+     * @return SectionInterface
      */
     public function set(string $key, string $value): SectionInterface;
 
@@ -35,7 +37,7 @@ interface SectionInterface
      * @param string $key
      *
      * @return string
-     * @throws \InvalidArgumentException
+     * @throws InvalidArgumentException
      */
     public function get(string $key): string;
 
