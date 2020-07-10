@@ -1,9 +1,9 @@
 <?php
 
-namespace XL2TP\Tests;
+namespace Tests\XL2TP;
 
-use XL2TP\Helpers;
 use PHPUnit\Framework\TestCase;
+use XL2TP\Helpers;
 
 class HelpersTest extends TestCase
 {
@@ -25,6 +25,6 @@ class HelpersTest extends TestCase
     public function testDecamelize(string $in, string $out): void
     {
         $test = Helpers::decamelize($in);
-        $this->assertEquals($out, $test);
+        self::assertEquals($out, $test);
     }
 }

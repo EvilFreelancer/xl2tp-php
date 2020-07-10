@@ -1,6 +1,6 @@
 <?php
 
-namespace XL2TP\Tests;
+namespace Tests\XL2TP;
 
 use Exception;
 use PHPUnit\Framework\TestCase;
@@ -31,13 +31,13 @@ class GeneratorTest extends TestCase
         $this->object = new Generator($obj);
     }
 
-    public function test__construct(): void
+    public function testConstructor(): void
     {
         try {
-            $this->assertIsObject($this->object);
-            $this->assertInstanceOf(Generator::class, $this->object);
+            self::assertIsObject($this->object);
+            self::assertInstanceOf(Generator::class, $this->object);
         } catch (Exception $e) {
-            $this->assertContains('Must be initialized ', $e->getMessage());
+            self::assertStringContainsString('Must be initialized ', $e->getMessage());
         }
     }
 
@@ -47,8 +47,8 @@ class GeneratorTest extends TestCase
         $sample .= "[lns default]\nexclusive = \"yes\"\nlac = \"awesome\"\nassign ip = \"192.168.1.1\"\n\n";
         $ini    = $this->object->generate();
 
-        $this->assertIsString($ini);
-        $this->assertEquals($ini, $sample);
+        self::assertIsString($ini);
+        self::assertEquals($ini, $sample);
     }
 
     public function testGenerateEx(): void

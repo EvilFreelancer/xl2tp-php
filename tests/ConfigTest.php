@@ -1,13 +1,12 @@
 <?php
 
-namespace XL2TP\Tests;
+namespace Tests\XL2TP;
 
 use BadMethodCallException;
 use InvalidArgumentException;
 use PHPUnit\Framework\TestCase;
 use XL2TP\Config;
 use XL2TP\Interfaces\Sections\GlobalInterface;
-use XL2TP\Section;
 
 class ConfigTest extends TestCase
 {
@@ -18,23 +17,34 @@ class ConfigTest extends TestCase
         $this->object = new Config();
     }
 
-    public function test__get(): void
+    public function testConstructor(): void
+    {
+        $object = new Config([
+            'global' => [
+                'port' => 123,
+            ],
+        ]);
+
+        self::assertEquals(123, $object->global->port);
+    }
+
+    public function testGetter(): void
     {
         $this->expectException(InvalidArgumentException::class);
         $this->object->dummy->dummy = 123;
 
         $this->object->global->port = 123;
-        $this->assertContainsOnlyInstancesOf(GlobalInterface::class, [$this->object->sections[md5('global')]]);
-        $this->assertEquals($this->object->sections[md5('global')]->parameters['port'], 123);
+        self::assertContainsOnlyInstancesOf(GlobalInterface::class, [$this->object->sections[md5('global')]]);
+        self::assertEquals(123, $this->object->sections[md5('global')]->parameters['port']);
     }
 
-    public function test__isset(): void
+    public function testIsSetter(): void
     {
         $this->object->global->port = 1234;
-        $this->assertTrue(isset($this->object->global));
+        self::assertTrue(isset($this->object->global));
     }
 
-    public function test__set(): void
+    public function testSetter(): void
     {
         $this->expectException(BadMethodCallException::class);
         $this->object->dummy = 123;
@@ -55,11 +65,11 @@ class ConfigTest extends TestCase
         $sample .= "[lns default]\nexclusive = \"yes\"\nlac = \"awesome\"\nassign ip = \"192.168.1.1\"\n\n";
         $ini    = $this->object->generate();
 
-        $this->assertIsString($ini);
-        $this->assertEquals($ini, $sample);
+        self::assertIsString($ini);
+        self::assertEquals($ini, $sample);
     }
 
-    public function test__call(): void
+    public function testCaller(): void
     {
         // Test suite
         $this->object->global()->port       = 123;
@@ -68,10 +78,10 @@ class ConfigTest extends TestCase
         $this->object->lac()->redial        = 123;
 
         // Validation
-        $this->assertEquals($this->object->sections[md5('global')]->parameters['port'], 123);
-        $this->assertEquals($this->object->sections[md5('global')]->parameters['listen-addr'], '0.0.0.0');
-        $this->assertEquals($this->object->sections[md5('lns' . 'default')]->parameters['local ip'], '0.0.0.0');
-        $this->assertEquals($this->object->sections[md5('lac' . 'default')]->parameters['redial'], 123);
+        self::assertEquals(123, $this->object->sections[md5('global')]->parameters['port']);
+        self::assertEquals('0.0.0.0', $this->object->sections[md5('global')]->parameters['listen-addr']);
+        self::assertEquals('0.0.0.0', $this->object->sections[md5('lns' . 'default')]->parameters['local ip']);
+        self::assertEquals(123, $this->object->sections[md5('lac' . 'default')]->parameters['redial']);
 
         $this->expectException(InvalidArgumentException::class);
         $this->object->dummy()->dummy = 123;
