@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace XL2TP;
 
 use BadMethodCallException;
@@ -7,30 +9,40 @@ use InvalidArgumentException;
 use XL2TP\Interfaces\ConfigInterface;
 use XL2TP\Interfaces\GeneratorInterface;
 use XL2TP\Interfaces\SectionInterface;
-use XL2TP\Interfaces\Sections\GlobalInterface;
-use XL2TP\Interfaces\Sections\LacInterface;
-use XL2TP\Interfaces\Sections\LnsInterface;
 
 /**
- * Class Config
+ * Class Configuration
  *
- * @property GlobalInterface $global
- * @property LnsInterface    $lns
- * @property LacInterface    $lac
- * @method   GlobalInterface global()
- * @method   LnsInterface    lns(string $suffix = null)
- * @method   LacInterface    lac(string $suffix = null)
+ * @property \XL2TP\Interfaces\Sections\GlobalInterface $global
+ * @property \XL2TP\Interfaces\Sections\LacInterface    $lac
+ * @property \XL2TP\Interfaces\Sections\LnsInterface    $lns
+ * @method   \XL2TP\Interfaces\Sections\GlobalInterface global()
+ * @method   \XL2TP\Interfaces\Sections\LacInterface    lns(string $suffix = null)
+ * @method   \XL2TP\Interfaces\Sections\LnsInterface    lac(string $suffix = null)
  *
- * @package XL2TP
  */
 class Config implements ConfigInterface, GeneratorInterface
 {
     /**
-     * List of preconfigured sections
+     * List of preconfigurationured sections
      *
-     * @var array<string, SectionInterface>
+     * @var array<string, \XL2TP\Interfaces\SectionInterface>
      */
     public $sections = [];
+
+    /**
+     * Configuration constructor.
+     *
+     * @param array $configuration
+     */
+    public function __construct(array $configuration = [])
+    {
+        foreach ($configuration as $section => $values) {
+            foreach ($values as $key => $value) {
+                $this->$section->set($key, $value);
+            }
+        }
+    }
 
     /**
      * Get section of configuration by provided name
@@ -38,12 +50,11 @@ class Config implements ConfigInterface, GeneratorInterface
      * @param string      $section Name of section
      * @param string|null $suffix  Additional suffix of section name
      *
-     * @return SectionInterface
-     * @throws InvalidArgumentException
+     * @return \XL2TP\Interfaces\SectionInterface
      */
     public function section(string $section, string $suffix = null): SectionInterface
     {
-        if (empty($suffix) && mb_strtolower(trim($section)) !== 'global') {
+        if (empty($suffix) && 'global' !== mb_strtolower(trim($section))) {
             $suffix = 'default';
         }
 
@@ -79,6 +90,8 @@ class Config implements ConfigInterface, GeneratorInterface
      *
      * @param string $name
      * @param string $value
+     *
+     * @throws \BadMethodCallException Because method is readonly
      */
     public function __set(string $name, string $value)
     {
@@ -90,10 +103,10 @@ class Config implements ConfigInterface, GeneratorInterface
      *
      * @param string $name
      *
-     * @return SectionInterface
-     * @throws InvalidArgumentException
+     * @return \XL2TP\Interfaces\SectionInterface
+     * @throws \InvalidArgumentException If section is not allowed
      */
-    public function __get(string $name)
+    public function __get(string $name): SectionInterface
     {
         $nameWithSpaces = Helpers::decamelize($name);
         $words          = explode(' ', $nameWithSpaces);
@@ -113,9 +126,10 @@ class Config implements ConfigInterface, GeneratorInterface
      * @param string $section
      * @param array  $arguments
      *
-     * @return SectionInterface
+     * @return \XL2TP\Interfaces\SectionInterface
+     * @throws \InvalidArgumentException If section is not allowed
      */
-    public function __call(string $section, array $arguments)
+    public function __call(string $section, array $arguments): SectionInterface
     {
         $suffix = $arguments[0] ?? null;
 
@@ -130,10 +144,12 @@ class Config implements ConfigInterface, GeneratorInterface
      * Generate L2TP configuration by parameters from memory
      *
      * @return string
+     * @throws \RuntimeException If was set bad configuration
      */
     public function generate(): string
     {
         $generator = new Generator($this);
+
         return $generator->generate();
     }
 }

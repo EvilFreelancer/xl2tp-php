@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace XL2TP\Interfaces\Sections;
 
 use XL2TP\Interfaces\SectionInterface;
@@ -66,6 +68,6 @@ interface LnsInterface extends SectionInterface
         'flow bits',
         'challenge',
         'rx bps',
-        'tx bps'
+        'tx bps',
     ];
 }

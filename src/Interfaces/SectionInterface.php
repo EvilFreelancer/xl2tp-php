@@ -1,8 +1,8 @@
 <?php
 
-namespace XL2TP\Interfaces;
+declare(strict_types=1);
 
-use InvalidArgumentException;
+namespace XL2TP\Interfaces;
 
 /**
  * Interface SectionInterface
@@ -27,7 +27,7 @@ interface SectionInterface
      * @param string $key
      * @param string $value
      *
-     * @return SectionInterface
+     * @return \XL2TP\Interfaces\SectionInterface
      */
     public function set(string $key, string $value): SectionInterface;
 
@@ -36,10 +36,9 @@ interface SectionInterface
      *
      * @param string $key
      *
-     * @return string
-     * @throws InvalidArgumentException
+     * @return string|int|null
      */
-    public function get(string $key): string;
+    public function get(string $key);
 
     /**
      * Remove provided parameter

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace XL2TP;
 
 use RuntimeException;
@@ -9,14 +11,14 @@ use XL2TP\Interfaces\GeneratorInterface;
 class Generator implements GeneratorInterface
 {
     /**
-     * @var ConfigInterface
+     * @var \XL2TP\Interfaces\ConfigInterface
      */
     public $config;
 
     /**
      * Generator constructor.
      *
-     * @param ConfigInterface $config
+     * @param \XL2TP\Interfaces\ConfigInterface $config
      */
     public function __construct(ConfigInterface $config)
     {
@@ -26,14 +28,14 @@ class Generator implements GeneratorInterface
     /**
      * Render section by parameters in array
      *
-     * @param Section $section
+     * @param \XL2TP\Section $section Name of section: global, default, lac, lnc
      *
      * @return string
      */
     private function render(Section $section): string
     {
         $name = $section->section;
-        if ($section->section !== 'global') {
+        if ('global' !== $section->section) {
             $name .= $section->suffix ? ' ' . $section->suffix : '';
         }
 
@@ -41,6 +43,7 @@ class Generator implements GeneratorInterface
         foreach ($section->parameters as $key => $val) {
             $result .= "$key = " . (is_numeric($val) ? $val : '"' . $val . '"') . PHP_EOL;
         }
+
         return $result . PHP_EOL;
     }
 
@@ -48,7 +51,7 @@ class Generator implements GeneratorInterface
      * Generate L2TP configuration by parameters from memory
      *
      * @return string
-     * @throws \RuntimeException
+     * @throws \RuntimeException If was set bad config
      */
     public function generate(): string
     {
@@ -60,6 +63,7 @@ class Generator implements GeneratorInterface
         foreach ($this->config->sections as $section) {
             $result .= $this->render($section);
         }
+
         return $result;
     }
 }

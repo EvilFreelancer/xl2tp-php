@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace XL2TP;
 
 class Helpers
@@ -23,7 +25,7 @@ class Helpers
         foreach ($result as &$match) {
             $match = $match === strtoupper($match) ? strtolower($match) : lcfirst($match);
         }
+
         return implode(' ', $result);
     }
-
 }

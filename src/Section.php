@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace XL2TP;
 
 use InvalidArgumentException;
@@ -8,12 +10,6 @@ use XL2TP\Interfaces\Sections\GlobalInterface;
 use XL2TP\Interfaces\Sections\LacInterface;
 use XL2TP\Interfaces\Sections\LnsInterface;
 
-/**
- * Class Section
- *
- * @package XL2TP
- * @since   1.0.0
- */
 class Section implements SectionInterface
 {
     /**
@@ -31,7 +27,7 @@ class Section implements SectionInterface
     public $suffix = 'default';
 
     /**
-     * List of preconfigured parameters
+     * List of preconfigurationured parameters
      *
      * @var array
      */
@@ -59,12 +55,12 @@ class Section implements SectionInterface
      * @param string|null $section
      * @param string|null $suffix
      *
-     * @throws InvalidArgumentException
+     * @throws \InvalidArgumentException If section is not allowed
      */
     public function __construct(string $section = null, string $suffix = null)
     {
         // Set section
-        if (!empty(trim($section))) {
+        if (!empty($section) && !empty(trim($section))) {
             $this->section = mb_strtolower(trim($section));
 
             // Check if section is allowed
@@ -74,12 +70,12 @@ class Section implements SectionInterface
         }
 
         // Set suffix
-        if (!empty(trim($suffix))) {
+        if (!empty($suffix) && !empty(trim($suffix))) {
             $this->suffix = mb_strtolower(trim($suffix));
         }
 
         // Extract allowed list
-        /** @var GlobalInterface|LnsInterface|LacInterface $allowed */
+        /** @var \XL2TP\Interfaces\Sections\GlobalInterface|\XL2TP\Interfaces\Sections\LnsInterface|\XL2TP\Interfaces\Sections\LacInterface $allowed */
         $allowed       = self::RELATIONS[$this->section];
         $this->allowed = $allowed::ALLOWED;
     }
@@ -101,10 +97,10 @@ class Section implements SectionInterface
      *
      * @param string $key
      *
-     * @return string
+     * @return string|int|null
      * @throws InvalidArgumentException
      */
-    public function get(string $key): string
+    public function get(string $key)
     {
         return $this->parameters[$key];
     }
@@ -112,12 +108,12 @@ class Section implements SectionInterface
     /**
      * Set parameter of section
      *
-     * @param string      $key
-     * @param string|null $value
+     * @param string          $key
+     * @param string|int|null $value
      *
      * @return SectionInterface
      */
-    public function set(string $key, string $value = null): SectionInterface
+    public function set(string $key, $value = null): SectionInterface
     {
         $key = Helpers::decamelize($key);
         if (!in_array($key, $this->allowed, true)) {
@@ -151,9 +147,9 @@ class Section implements SectionInterface
      *
      * @param string $key
      *
-     * @return string
+     * @return string|int|null
      */
-    public function __get(string $key): string
+    public function __get(string $key)
     {
         return $this->get($key);
     }
@@ -173,10 +169,10 @@ class Section implements SectionInterface
     /**
      * Alias to `->set()`
      *
-     * @param string      $key
-     * @param string|null $value
+     * @param string          $key
+     * @param string|int|null $value
      */
-    public function __set(string $key, string $value = null)
+    public function __set(string $key, $value = null)
     {
         $this->set($key, $value);
     }

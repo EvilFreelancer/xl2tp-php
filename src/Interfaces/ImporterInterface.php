@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace XL2TP\Interfaces;
 
 /**
@@ -15,7 +17,7 @@ interface ImporterInterface
      *
      * @param string $filename Path to file with INI configuration
      *
-     * @return ImporterInterface
+     * @return \XL2TP\Interfaces\ImporterInterface
      */
     public function load(string $filename): ImporterInterface;
 
@@ -24,7 +26,7 @@ interface ImporterInterface
      *
      * @param array $configuration
      *
-     * @return ImporterInterface
+     * @return \XL2TP\Interfaces\ImporterInterface
      */
     public function loadArray(array $configuration): ImporterInterface;
 
@@ -33,7 +35,7 @@ interface ImporterInterface
      *
      * @param array $configuration
      *
-     * @return ImporterInterface
+     * @return \XL2TP\Interfaces\ImporterInterface
      */
     public function loadJson(array $configuration): ImporterInterface;
 }

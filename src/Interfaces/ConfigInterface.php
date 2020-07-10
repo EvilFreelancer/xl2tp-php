@@ -1,11 +1,11 @@
 <?php
 
+declare(strict_types=1);
+
 namespace XL2TP\Interfaces;
 
-use InvalidArgumentException;
-
 /**
- * Interface ConfigInterface
+ * Interface ConfigurationInterface
  *
  * @package XL2TP\Interfaces
  * @since   1.0.0
@@ -17,8 +17,7 @@ interface ConfigInterface
      *
      * @param string|null $name Name of section
      *
-     * @return SectionInterface
-     * @throws InvalidArgumentException
+     * @return \XL2TP\Interfaces\SectionInterface
      */
     public function section(string $name): SectionInterface;
 }
