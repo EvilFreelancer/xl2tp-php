@@ -7,7 +7,7 @@
 
 # XL2TP configuration manager on PHP 
 
-XL2TP configuration manager gives you ability to work with configuration of your services in OOP style.
+XL2TP configuration manager gives you ability to work with a configuration of your services in OOP style.
 
     composer require evilfreelancer/xl2tp-php
 
@@ -45,7 +45,7 @@ $obj->lac('awesome')->lns       = 'test';
 echo $obj->generate();
 ```
 
-Will generate following INI config
+Will generate following INI configuration
 
 ```ini
 [global]
